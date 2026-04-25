@@ -7,8 +7,8 @@
     <style>
         body {
             background-color: transparent; 
-            /* color: transparent; <- 이 부분이 글자를 안 보이게 만들었습니다. 삭제했습니다. */
-            color: #efefef; /* 기본 글자색 설정 */
+            /* 글자색을 투명이 아닌 밝은 회색으로 설정하여 기본 가독성 확보 */
+            color: #efefef; 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             justify-content: center;
@@ -18,21 +18,23 @@
             overflow: hidden;
         }
         .timer-card {
-            background: #252525; /* 카드 배경은 어두운 톤 유지 */
+            background: #252525;
             padding: 1.5rem;
             border-radius: 20px;
             text-align: center;
             width: 280px;
             border: 1px solid #373737;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* 약간의 입체감 추가 */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
+        /* 타이머 숫자 스타일 - 색상을 흰색(#ffffff)으로 강제 고정 */
         #display {
             font-size: 4.5rem;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            color: #ffffff !important; 
             font-variant-numeric: tabular-nums;
             letter-spacing: -2px;
-            color: #ffffff; /* 타이머 숫자 강조 */
+            line-height: 1;
         }
         .btn-group, .plus-group {
             display: grid;
@@ -51,9 +53,10 @@
             cursor: pointer;
             font-size: 0.85rem;
             font-weight: 500;
-            transition: background 0.2s;
+            transition: 0.2s;
         }
         button:hover { background: #474747; }
+        
         .cancel-btn {
             background: #3c2b2b;
             color: #ff9b9b;
@@ -89,23 +92,6 @@
     let timerId = null;
     const display = document.getElementById('display');
     
-    function playBeep() {
-        try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            oscillator.start();
-            setTimeout(() => oscillator.stop(), 600);
-        } catch (e) {
-            console.log("Audio play failed", e);
-        }
-    }
-
     function updateDisplay() {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
@@ -136,6 +122,23 @@
         clearInterval(timerId);
         timeLeft = 0;
         updateDisplay();
+    }
+
+    function playBeep() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 600);
+        } catch (e) {
+            console.error("Audio failed", e);
+        }
     }
 </script>
 </body>
