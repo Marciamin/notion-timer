@@ -6,8 +6,9 @@
     <title>1분 스피치 타이머</title>
     <style>
         body {
-            background-color: transparent; /* 노션 배경과 어우러지게 설정 */
-            color: transparent;
+            background-color: transparent; 
+            /* color: transparent; <- 이 부분이 글자를 안 보이게 만들었습니다. 삭제했습니다. */
+            color: #efefef; /* 기본 글자색 설정 */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             justify-content: center;
@@ -17,12 +18,13 @@
             overflow: hidden;
         }
         .timer-card {
-            background: #252525;
+            background: #252525; /* 카드 배경은 어두운 톤 유지 */
             padding: 1.5rem;
             border-radius: 20px;
             text-align: center;
             width: 280px;
             border: 1px solid #373737;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); /* 약간의 입체감 추가 */
         }
         #display {
             font-size: 4.5rem;
@@ -30,6 +32,7 @@
             margin-bottom: 10px;
             font-variant-numeric: tabular-nums;
             letter-spacing: -2px;
+            color: #ffffff; /* 타이머 숫자 강조 */
         }
         .btn-group, .plus-group {
             display: grid;
@@ -48,6 +51,7 @@
             cursor: pointer;
             font-size: 0.85rem;
             font-weight: 500;
+            transition: background 0.2s;
         }
         button:hover { background: #474747; }
         .cancel-btn {
@@ -56,6 +60,7 @@
             width: 100%;
             margin-top: 5px;
         }
+        .cancel-btn:hover { background: #4c3535; }
     </style>
 </head>
 <body>
@@ -85,16 +90,20 @@
     const display = document.getElementById('display');
     
     function playBeep() {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.type = 'sine';
-        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        oscillator.start();
-        setTimeout(() => oscillator.stop(), 600);
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            oscillator.start();
+            setTimeout(() => oscillator.stop(), 600);
+        } catch (e) {
+            console.log("Audio play failed", e);
+        }
     }
 
     function updateDisplay() {
